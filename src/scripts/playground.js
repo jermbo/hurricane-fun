@@ -15,43 +15,78 @@ fetch(`${api}/hurricanes`)
  */
 
 function handleData(data) {
-  // console.log(data);
-  const childhood = getChildhoodData(data);
-  const childhoodTotal = childhood.allStorms.length;
-  const twoThousands = getTwoThouandsData(data);
-  const twoThousandsTotal = twoThousands.allStorms.length;
-  console.log(childhood.allStorms.length);
-  console.log(twoThousands.allStorms.length);
-  console.log(`There were ${twoThousandsTotal - childhoodTotal} more storms in the 2000's than in the 80's and 90's`);
-}
-
-function getChildhoodData(data) {
-  const allStorms = data.filter(d => d.Season >= 1980 && d.Season <= 1999);
-  // console.log(allStorms); // 7562
-
-  return {
-    allStorms,
-    ...getCategories(allStorms),
+  // console.log(data.length);
+  const childhood = {
+    ...getCategories(data.filter(d => d.Season >= 1980 && d.Season <= 1999)),
   };
-}
 
-function getTwoThouandsData(data) {
-  const allStorms = data.filter(d => d.Season >= 2000);
-  // console.log(allStorms); // 8515
-  // const allCats = getCategories(allStorms);
-  // console.log(allCats);
-  return {
-    allStorms,
-    ...getCategories(allStorms),
+  const twoThousands = {
+    ...getCategories(data.filter(d => d.Season >= 2000)),
   };
+
+  console.log(childhood);
+  console.log(twoThousands);
+  console.log(`There were ${twoThousands.total - childhood.total} more storms in the 2000's than in the 80's and 90's`);
+  console.log(`80's & 90's total storms ${childhood.total}`);
+  console.log(`2000's & 2010's total storms ${twoThousands.total} (data complete until 2016)`);
 }
 
 function getCategories(data) {
-  const cat1 = data.filter(d => d["Wind(WMO)"] > 75 && d["Wind(WMO)"] < 95);
-  const cat2 = data.filter(d => d["Wind(WMO)"] > 96 && d["Wind(WMO)"] < 110);
-  const cat3 = data.filter(d => d["Wind(WMO)"] > 111 && d["Wind(WMO)"] < 129);
-  const cat4 = data.filter(d => d["Wind(WMO)"] > 130 && d["Wind(WMO)"] < 157);
-  const cat5 = data.filter(d => d["Wind(WMO)"] > 157);
+  const wind = "Wind(WMO)";
+  const allStorms = data.reduce(allStormsAtStrongestPoint, {});
+  const total = Object.keys(allStorms).length;
+  const tropical = data.filter(d => d[wind] < 75).reduce(nameStormAtStrongestPoint, {});
+  const named = data.filter(d => d.Name != "UNNAMED").reduce(nameStormAtStrongestPoint, {});
+  const unnamed = data.reduce(unnamedStormAtStrongestPoint, {});
+  const cat1 = data.filter(d => d[wind] > 75 && d[wind] < 95).reduce(nameStormAtStrongestPoint, {});
+  const cat2 = data.filter(d => d[wind] > 96 && d[wind] < 110).reduce(nameStormAtStrongestPoint, {});
+  const cat3 = data.filter(d => d[wind] > 111 && d[wind] < 129).reduce(nameStormAtStrongestPoint, {});
+  const cat4 = data.filter(d => d[wind] > 130 && d[wind] < 157).reduce(nameStormAtStrongestPoint, {});
+  const cat5 = data.filter(d => d[wind] > 157).reduce(nameStormAtStrongestPoint, {});
 
-  return { cat1, cat2, cat3, cat4, cat5 };
+  return { allStorms, total, tropical, named, unnamed, cat1, cat2, cat3, cat4, cat5 };
+}
+
+function nameStormAtStrongestPoint(acc, d) {
+  const name = d.Name;
+  const wind = "Wind(WMO)";
+  if (!acc[name]) {
+    acc[name] = d;
+  }
+
+  if (acc[name][wind] < d[wind]) {
+    acc[name] = d;
+  }
+  return acc;
+}
+
+function allStormsAtStrongestPoint(acc, d) {
+  const name = d.Name != "UNNAMED" ? d.Name : `${d.Season}-${d.Num}`;
+  const wind = "Wind(WMO)";
+
+  if (!acc[name]) {
+    acc[name] = d;
+  }
+
+  if (acc[name][wind] < d[wind]) {
+    acc[name] = d;
+  }
+  return acc;
+}
+
+function unnamedStormAtStrongestPoint(acc, d) {
+  if (d.Name != "UNNAMED") {
+    return acc;
+  }
+  const name = `${d.Season}-${d.Num}`;
+  const wind = "Wind(WMO)";
+
+  if (!acc[name]) {
+    acc[name] = d;
+  }
+
+  if (acc[name][wind] < d[wind]) {
+    acc[name] = d;
+  }
+  return acc;
 }
