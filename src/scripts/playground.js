@@ -1,9 +1,22 @@
 const api = "http://localhost:8000";
+const hurricaneDOM = document.querySelector(".hurricanes");
+const startInput = document.querySelector(".start");
+const endInput = document.querySelector(".end");
+const searchBtn = document.querySelector(".search");
+let startDate = 1980;
+let endDate = 2000;
+
+let allData = {};
 
 fetch(`${api}/hurricanes`)
   .then(resp => resp.json())
   .then(data => {
-    handleData(data);
+    startInput.value = startDate;
+    endInput.value = endDate;
+    allData = data;
+    // handleData(data);
+    addEventListeners();
+    searchBtn.click();
   });
 
 /**
@@ -14,11 +27,76 @@ fetch(`${api}/hurricanes`)
  * Cat 5 : 157+
  */
 
+function addEventListeners() {
+  startInput.addEventListener("input", updateDate);
+  endInput.addEventListener("input", updateDate);
+  searchBtn.addEventListener("click", searchHurricanes);
+}
+
+function updateDate(e) {
+  const target = e.target;
+  if (target.classList.contains("start")) {
+    startDate = +e.target.value;
+  } else {
+    endDate = +e.target.value;
+  }
+}
+
+function searchHurricanes(e) {
+  e.preventDefault();
+  filterData();
+}
+
+function filterData() {
+  const wind = "Wind(WMO)";
+  const newData = {
+    ...getCategories(allData.filter(d => d.Season >= startDate && d.Season <= endDate)),
+  };
+
+  const newDataKeys = Object.keys(newData.named);
+  console.log(newDataKeys);
+
+  const newOutput = newDataKeys
+    .sort((a, b) => {
+      return newData.named[a].Season > newData.named[b].Season ? 1 : -1;
+    })
+    .map(c => {
+      return `<article  class="hurricane">
+      <h1>${newData.named[c].Name}</h1>
+      <p>Season: ${newData.named[c].Season}</p>
+      <p>Max Wind Speed: ${newData.named[c][wind]}</p>
+    </article>`;
+    })
+    .join("");
+
+  hurricaneDOM.innerHTML = newOutput;
+}
+
 function handleData(data) {
+  allData = data;
+  const wind = "Wind(WMO)";
   // console.log(data.length);
   const childhood = {
     ...getCategories(data.filter(d => d.Season >= 1980 && d.Season <= 1999)),
   };
+
+  const childhoodNamedKeys = Object.keys(childhood.named);
+  console.log(childhoodNamedKeys);
+
+  const childhoodOutput = childhoodNamedKeys
+    .sort((a, b) => {
+      return childhood.named[a].Season > childhood.named[b].Season ? 1 : -1;
+    })
+    .map(c => {
+      return `<article  class="hurricane">
+      <h1>${childhood.named[c].Name}</h1>
+      <p>Season: ${childhood.named[c].Season}</p>
+      <p>Max Wind Speed: ${childhood.named[c][wind]}</p>
+    </article>`;
+    })
+    .join("");
+
+  hurricaneDOM.innerHTML = childhoodOutput;
 
   const twoThousands = {
     ...getCategories(data.filter(d => d.Season >= 2000)),
