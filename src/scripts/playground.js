@@ -35,19 +35,25 @@ function getCategories(data) {
   const wind = "Wind(WMO)";
   const allStorms = data.reduce(allStormsAtStrongestPoint, {});
   const total = Object.keys(allStorms).length;
-  const tropical = data.filter(d => d[wind] < 75).reduce(nameStormAtStrongestPoint, {});
-  const named = data.filter(d => d.Name != "UNNAMED").reduce(nameStormAtStrongestPoint, {});
+  const tropical = data.filter(d => d[wind] < 75).reduce(namedStormAtStrongestPoint, {});
+  const named = data.filter(filterNamedStorms).reduce(namedStormAtStrongestPoint, {});
   const unnamed = data.reduce(unnamedStormAtStrongestPoint, {});
-  const cat1 = data.filter(d => d[wind] > 75 && d[wind] < 95).reduce(nameStormAtStrongestPoint, {});
-  const cat2 = data.filter(d => d[wind] > 96 && d[wind] < 110).reduce(nameStormAtStrongestPoint, {});
-  const cat3 = data.filter(d => d[wind] > 111 && d[wind] < 129).reduce(nameStormAtStrongestPoint, {});
-  const cat4 = data.filter(d => d[wind] > 130 && d[wind] < 157).reduce(nameStormAtStrongestPoint, {});
-  const cat5 = data.filter(d => d[wind] > 157).reduce(nameStormAtStrongestPoint, {});
+  const cat1 = data.filter(d => d[wind] > 75 && d[wind] < 95).reduce(namedStormAtStrongestPoint, {});
+  const cat2 = data.filter(d => d[wind] > 96 && d[wind] < 110).reduce(namedStormAtStrongestPoint, {});
+  const cat3 = data.filter(d => d[wind] > 111 && d[wind] < 129).reduce(namedStormAtStrongestPoint, {});
+  const cat4 = data.filter(d => d[wind] > 130 && d[wind] < 157).reduce(namedStormAtStrongestPoint, {});
+  const cat5 = data.filter(d => d[wind] > 157).reduce(namedStormAtStrongestPoint, {});
 
   return { allStorms, total, tropical, named, unnamed, cat1, cat2, cat3, cat4, cat5 };
 }
 
-function nameStormAtStrongestPoint(acc, d) {
+function filterNamedStorms(d) {
+  const name = d.Name.split(":");
+  const hasUnnamed = name.some(n => n != "UNNAMED");
+  return name.length == 1 && hasUnnamed;
+}
+
+function namedStormAtStrongestPoint(acc, d) {
   const name = d.Name;
   const wind = "Wind(WMO)";
   if (!acc[name]) {
@@ -62,6 +68,7 @@ function nameStormAtStrongestPoint(acc, d) {
 
 function allStormsAtStrongestPoint(acc, d) {
   const name = d.Name != "UNNAMED" ? d.Name : `${d.Season}-${d.Num}`;
+  // const name = d.Name.includes("UNNAMED") ? `${d.Season}-${d.Num}` : d.Name;
   const wind = "Wind(WMO)";
 
   if (!acc[name]) {
