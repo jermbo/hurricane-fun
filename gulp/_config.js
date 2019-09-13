@@ -3,7 +3,7 @@ const yargs = require("yargs");
 const env = process.env.ENV;
 
 const srcPath = "./src";
-const buildPath = "./build";
+const buildPath = "./dist";
 const tmpPath = "./_tmp";
 const siteInstanceName = "./";
 
@@ -13,6 +13,14 @@ module.exports = {
   tmpPath,
   siteInstanceName,
   env,
+  db: {
+    source: `./db.json`,
+    build: `${buildPath}/`,
+  },
+  redirects: {
+    source: `${srcPath}/_redirects`,
+    build: `${buildPath}/`,
+  },
   html: {
     source: `${srcPath}/**/*.{html,htm,php,cshtml}`,
     build: `${buildPath}/`,

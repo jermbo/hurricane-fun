@@ -1,4 +1,4 @@
-const api = "http://localhost:8000";
+const api = location.hostname == "localhost"? 'http://localhost:8000' : '/api';
 const hurricaneDOM = document.querySelector(".hurricanes");
 const startInput = document.querySelector(".start");
 const endInput = document.querySelector(".end");
@@ -13,7 +13,7 @@ fetch(`${api}/hurricanes`)
   .then(data => {
     startInput.value = startDate;
     endInput.value = endDate;
-    allData = data;
+    allData = location.hostname == "localhost" ? data : data.hurricanes;
     // handleData(data);
     addEventListeners();
     searchBtn.click();
