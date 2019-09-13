@@ -13,7 +13,7 @@ fetch(`${api}/hurricanes`)
   .then(data => {
     startInput.value = startDate;
     endInput.value = endDate;
-    allData = data;
+    allData = location.hostname == "localhost" ? data : data.hurricanes;
     // handleData(data);
     addEventListeners();
     searchBtn.click();
