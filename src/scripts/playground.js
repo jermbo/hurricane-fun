@@ -1,4 +1,4 @@
-const api = "http://localhost:8000";
+const api = location.hostname == "localhost"? 'http://localhost:8000' : '/api';
 const hurricaneDOM = document.querySelector(".hurricanes");
 const startInput = document.querySelector(".start");
 const endInput = document.querySelector(".end");
