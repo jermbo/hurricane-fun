@@ -13,6 +13,10 @@ module.exports = {
   tmpPath,
   siteInstanceName,
   env,
+  redirects: {
+    source: `${srcPath}/_redirects`,
+    build: `${buildPath}/`,
+  },
   html: {
     source: `${srcPath}/**/*.{html,htm,php,cshtml}`,
     build: `${buildPath}/`,
