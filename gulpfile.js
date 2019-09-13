@@ -12,5 +12,6 @@ const { default: images } = require("./gulp/images");
 exports.clean = cleanAll;
 
 exports.default = series(cleanAll, parallel(html, styles, scripts, images), cleanTmp, serve, watcher);
+exports.build = series(cleanAll, parallel(html, styles, scripts, images), cleanTmp);
 
 exports.js = series(cleanAll, bundle);

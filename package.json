@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "gulp",
-    "compile": "gulp compile-project",
+    "build": "gulp build",
     "serve": "concurrently \"npm run dev\" \"npm run api\"",
     "api": "json-server --watch db.json --port 8000"
   },
