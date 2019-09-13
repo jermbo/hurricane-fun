@@ -6,7 +6,7 @@ const { redirects } = require("./_config");
 const src = redirects.source;
 const build = redirects.build;
 
-function redirects() {
+function compileRedirects() {
   return gulp
     .src(src)
     .pipe($.changed(build))
@@ -14,4 +14,4 @@ function redirects() {
 }
 
 // exports.src = src;
-exports.default = redirects;
+exports.default = compileRedirects;
