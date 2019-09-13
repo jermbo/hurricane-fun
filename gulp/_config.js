@@ -3,7 +3,7 @@ const yargs = require("yargs");
 const env = process.env.ENV;
 
 const srcPath = "./src";
-const buildPath = "./build";
+const buildPath = "./dist";
 const tmpPath = "./_tmp";
 const siteInstanceName = "./";
 
