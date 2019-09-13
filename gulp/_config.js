@@ -13,6 +13,10 @@ module.exports = {
   tmpPath,
   siteInstanceName,
   env,
+  db: {
+    source: `./db.json`,
+    build: `${buildPath}/`,
+  },
   redirects: {
     source: `${srcPath}/_redirects`,
     build: `${buildPath}/`,

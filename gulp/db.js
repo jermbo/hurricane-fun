@@ -1,12 +1,12 @@
 const gulp = require("gulp");
 const $ = require("gulp-load-plugins")({ lazy: true });
 
-const { redirects } = require("./_config");
+const { db } = require("./_config");
 
-const src = redirects.source;
-const build = redirects.build;
+const src = db.source;
+const build = db.build;
 
-function compileRedirects() {
+function compileDB() {
   return gulp
     .src(src)
     .pipe($.changed(build))
@@ -14,4 +14,4 @@ function compileRedirects() {
 }
 
 exports.src = src;
-exports.default = compileRedirects;
+exports.default = compileDB;
